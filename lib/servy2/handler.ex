@@ -1,4 +1,6 @@
 defmodule Servy2.Handler do
+  require Logger
+
   def handle(request) do
     request 
     |> parse 
@@ -6,8 +8,16 @@ defmodule Servy2.Handler do
     |> log
     |> route
     |> track
+    |> emojify
     |> format_response
   end
+
+  def emojify(%{status: 200 } = conv) do
+    body = "✅✅✅\n" <> conv.resp_body <> "\n✅✅✅"
+    %{ conv | resp_body: body } 
+  end
+
+  def emojify(conv), do: conv
 
   def track(%{ status: 404, path: path} = conv) do
     IO.puts "Warning: #{path} is not a valid route"
