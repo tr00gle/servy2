@@ -33,7 +33,7 @@ defmodule Servy2.Handler do
   def route(%{ method: "GET", path: "/bears" <> id } = conv) do
     %{ conv | status: 200, resp_body: "Bear #{id}" }
   end
-  
+
   def route(%{ method: _method, path: path } = conv) do 
     %{ conv | status: 404, resp_body: "No #{path} here!" }
   end
@@ -61,6 +61,8 @@ defmodule Servy2.Handler do
   end
 end
 
+# /wildthings
+# GET
 request = """
 GET /wildthings HTTP/1.1
 Host: example.com
@@ -68,11 +70,11 @@ User-Agent: ExampleBrowser/1.0
 Accept: */*
 
 """
-
 response = Servy2.Handler.handle(request)
-
 IO.puts response
 
+# /bears
+# GET
 request = """
 GET /bears HTTP/1.1
 Host: example.com
@@ -80,11 +82,10 @@ User-Agent: ExampleBrowser/1.0
 Accept: */*
 
 """
-
 response = Servy2.Handler.handle(request)
-
 IO.puts response
 
+# params
 request = """
 GET /bears/1 HTTP/1.1
 Host: example.com
@@ -92,10 +93,22 @@ User-Agent: ExampleBrowser/1.0
 Accept: */*
 
 """
-
 response = Servy2.Handler.handle(request)
-
 IO.puts response
+
+# DELETE
+request = """
+DELETE /bears/1 HTTP/1.1
+Host: example.com
+User-Agent: ExampleBrowser/1.0
+Accept: */*
+
+"""
+response = Servy2.Handler.handle(request)
+IO.puts response
+
+# /bigfoot
+# GET
 request = """
 GET /bigfoot HTTP/1.1
 Host: example.com
@@ -103,9 +116,7 @@ User-Agent: ExampleBrowser/1.0
 Accept: */*
 
 """
-
 response = Servy2.Handler.handle(request)
-
 IO.puts response
 
 
