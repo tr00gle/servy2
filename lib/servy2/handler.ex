@@ -16,25 +16,32 @@ defmodule Servy2.Handler do
       |> String.split("\n")
       |> List.first
       |> String.split(" ")
-    %{ method: method, path: path, resp_body: "" }
+    %{ method: method,
+       path: path,
+       status: nil,
+       resp_body: "" }
   end
 
   def route(%{ method: "GET", path: "/wildthings" } = conv) do
-    %{ conv | resp_body: "Bears, Lions, Tigers" }
+    %{ conv | status: 200, resp_body: "Bears, Lions, Tigers" }
   end
 
   def route(%{ method: "GET", path: "/bears" } = conv) do
-    %{ conv | resp_body: "Teddy, Smokey, Paddington" }
+    %{ conv | status: 200, resp_body: "Teddy, Smokey, Paddington" }
   end
 
-  def route(%{ method: "GET", path: "/bigfoot" } = conv) do
-    %{ conv | resp_body: "He doesn't exist!"}
+  def route(%{ method: "GET", path: "/bears" <> id } = conv) do
+    %{ conv | status: 200, resp_body: "Bear #{id}" }
+  end
+  
+  def route(%{ method: _method, path: path } = conv) do 
+    %{ conv | status: 404, resp_body: "No #{path} here!" }
   end
 
   def format_response(conv) do
     # TODO: Use values in the map to create an HTTP response string:
     """
-    HTTP/1.1 200 OK
+    HTTP/1.1 #{conv.status} #{status_reason(conv.status)}
     Content-Type: text/html
     Content-Length: #{byte_size(conv.resp_body)}
 
@@ -42,6 +49,16 @@ defmodule Servy2.Handler do
     """
   end
 
+  defp status_reason(code) do
+    %{
+      200 => "OK",
+      201 => "Created",
+      401 => "Unauthorized",
+      403 => "Not Found",
+      404 => "Not Found",
+      500 => "Internal Server Error"
+    }[code]
+  end
 end
 
 request = """
@@ -68,6 +85,17 @@ response = Servy2.Handler.handle(request)
 
 IO.puts response
 
+request = """
+GET /bears/1 HTTP/1.1
+Host: example.com
+User-Agent: ExampleBrowser/1.0
+Accept: */*
+
+"""
+
+response = Servy2.Handler.handle(request)
+
+IO.puts response
 request = """
 GET /bigfoot HTTP/1.1
 Host: example.com
