@@ -2,10 +2,22 @@ defmodule Servy2.Handler do
   def handle(request) do
     request 
     |> parse 
+    |> rewrite_path
     |> log
-    |> route 
+    |> route
+    |> track
     |> format_response
   end
+
+  def track(%{ status: 404, path: path} = conv) do
+    IO.puts "Warning: #{path} is not a valid route"
+  end
+
+  def rewrite_path(%{ path: "/wildlife" } = conv) do
+    %{ conv | path: "/wildthings" }
+  end
+
+  def rewrite_path(conv), do: conv
 
   def log(conv), do: IO.inspect conv
 
@@ -30,11 +42,11 @@ defmodule Servy2.Handler do
     %{ conv | status: 200, resp_body: "Teddy, Smokey, Paddington" }
   end
 
-  def route(%{ method: "GET", path: "/bears" <> id } = conv) do
+  def route(%{ method: "GET", path: "/bears/" <> id } = conv) do
     %{ conv | status: 200, resp_body: "Bear #{id}" }
   end
 
-  def route(%{ method: "DELETE", path: "/bears" <> id } = conv) do
+  def route(%{ method: "DELETE", path: "/bears/" <> _id } = conv) do
     %{ conv | status: 403, resp_body: "Sorry, we can't do deletions here."}
   end
 
