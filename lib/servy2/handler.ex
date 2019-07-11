@@ -1,6 +1,16 @@
 defmodule Servy2.Handler do
   require Logger
 
+  @moduledoc """
+    Handles HTTP Requests
+  """
+
+  @pages_path Path.expand("../../pages", __DIR__)
+
+  import Servy2.Plugins, only: [rewrite_path: 1, log: 1, track: 1]
+  import Servy2.Parser, only: [parse: 1]
+  
+  @doc "transforms request into a resposne"
   def handle(request) do
     request 
     |> parse 
@@ -18,49 +28,9 @@ defmodule Servy2.Handler do
   end
 
   def emojify(conv), do: conv
-
-  def track(%{ status: 404, path: path} = conv) do
-    IO.puts "Warning: #{path} is not a valid route"
-    conv
-  end
-
-  def track(conv), do: conv
-
-  def rewrite_path(%{ path: "/wildlife" } = conv) do
-    %{ conv | path: "/wildthings" }
-  end
-
-  def rewrite_path(%{ path: "/bears?id=" <> id } = conv) do
-    %{ conv | path: "/bears/#{id}" }
-  end
-
-  def rewrite_path(%{ path: "/about" } = conv) do
-    %{ conv | path: "/pages/about" }
-  end
-
-  def rewrite_path(%{ path: "/bears/new" } = conv) do
-    %{ conv | path: "/pages/form" }
-  end
-
-  def rewrite_path(conv), do: conv
-
-  def log(conv), do: IO.inspect conv
-
-  def parse(request) do
-    # TODO: Parse the request string into a map:
-    [ method, path, _protocol ] = 
-      request
-      |> String.split("\n")
-      |> List.first
-      |> String.split(" ")
-    %{ method: method,
-       path: path,
-       status: nil,
-       resp_body: "" }
-  end
-
+  
   def route(%{ method: "GET", path: "/pages/" <> page } = conv) do
-    Path.expand("../../pages", __DIR__)
+    @pages_path
     |> IO.inspect
     |> Path.join(page <> ".html")
     |> File.read
@@ -103,7 +73,7 @@ defmodule Servy2.Handler do
       200 => "OK",
       201 => "Created",
       401 => "Unauthorized",
-      403 => "Not Found",
+      403 => "Forbidden",
       404 => "Not Found",
       500 => "Internal Server Error"
     }[code]
