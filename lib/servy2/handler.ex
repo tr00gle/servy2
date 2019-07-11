@@ -34,6 +34,14 @@ defmodule Servy2.Handler do
     %{ conv | path: "/bears/#{id}" }
   end
 
+  def rewrite_path(%{ path: "/about" } = conv) do
+    %{ conv | path: "/pages/about" }
+  end
+
+  def rewrite_path(%{ path: "/bears/new" } = conv) do
+    %{ conv | path: "/pages/form" }
+  end
+
   def rewrite_path(conv), do: conv
 
   def log(conv), do: IO.inspect conv
@@ -59,28 +67,12 @@ defmodule Servy2.Handler do
     |> handle_file(conv)
   end
 
-  def route(%{ method: "GET", path: "/about" } = conv) do
-    Path.expand("../../pages", __DIR__)
-    |> IO.inspect
-    |> Path.join("about.html")
-    |> File.read
-    |> handle_file(conv)
-  end
-
   def route(%{ method: "GET", path: "/wildthings" } = conv) do
     %{ conv | status: 200, resp_body: "Bears, Lions, Tigers" }
   end
 
   def route(%{ method: "GET", path: "/bears" } = conv) do
     %{ conv | status: 200, resp_body: "Teddy, Smokey, Paddington" }
-  end
-
-  def route(%{ method: "GET", path: "/bears/new" } = conv) do
-    Path.expand("../../pages", __DIR__)
-    |> IO.inspect
-    |> Path.join("form.html")
-    |> File.read
-    |> handle_file(conv)
   end
 
   def route(%{ method: "GET", path: "/bears/" <> id } = conv) do
