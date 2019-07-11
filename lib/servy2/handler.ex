@@ -34,6 +34,10 @@ defmodule Servy2.Handler do
     %{ conv | status: 200, resp_body: "Bear #{id}" }
   end
 
+  def route(%{ method: "DELETE", path: "/bears" <> id } = conv) do
+    %{ conv | status: 403, resp_body: "Sorry, we can't do deletions here."}
+  end
+
   def route(%{ method: _method, path: path } = conv) do 
     %{ conv | status: 404, resp_body: "No #{path} here!" }
   end
