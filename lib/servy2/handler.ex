@@ -51,6 +51,46 @@ defmodule Servy2.Handler do
        resp_body: "" }
   end
 
+  def route(%{ method: "GET", path: "/about" } = conv) do
+    Path.expand("../../pages", __DIR__)
+    |> IO.inspect
+    |> Path.join("about.html")
+    |> File.read
+    |> handle_file(conv)
+  end
+
+  def handle_file({:ok, content}, conv) do
+    %{ conv | status: 200, resp_body: content }
+  end
+
+  def handle_file({:error, :enoent}, conv) do
+    Logger.info "File missing, inserting default string"
+    %{conv | status: 404, resp_body: "file not found. sorry bout that" }
+  end
+
+  def handle_file({:error, reason}, conv) do
+    Logger.warn "There was some other erorr"
+    %{conv | status: 500, resp_body: "File error: #{reason}" }
+  end
+
+  # def route(%{ method: "GET", path: "/about" } = conv) do
+  #   file = 
+  #     Path.expand("../../pages", __DIR__)
+  #     |> IO.inspect
+  #     |> Path.join("about.html")
+
+  #   case File.read(file) do
+  #     {:ok, contents} -> 
+  #       %{ conv | status: 200, resp_body: contents }
+  #     {:error, :enoent} ->
+  #       Logger.info "File missing, inserting default string"
+  #       %{conv | status: 404, resp_body: "file not found. sorry bout that" }
+  #     {:error, reason} ->
+  #       Logger.warn "There was some other erorr"
+  #       %{conv | status: 500, resp_body: "File error: #{reason}" }
+  #   end
+  # end
+
   def route(%{ method: "GET", path: "/wildthings" } = conv) do
     %{ conv | status: 200, resp_body: "Bears, Lions, Tigers" }
   end
@@ -162,4 +202,13 @@ Accept: */*
 response = Servy2.Handler.handle(request)
 IO.puts response
 
+# /about
+request = """
+GET /about HTTP/1.1
+Host: example.com
+User-Agent: ExampleBrowser/1.0
+Accept: */*
 
+"""
+response = Servy2.Handler.handle(request)
+IO.puts response
