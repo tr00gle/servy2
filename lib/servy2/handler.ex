@@ -5,7 +5,9 @@ defmodule Servy2.Handler do
     Handles HTTP Requests
   """
 
+  alias Servy2.Conv
   # @pages_path Path.expand("../../pages", __DIR__)
+  # Use this method when compiling with `iex -S mix`
   @pages_path Path.expand("pages", File.cwd!)
 
   import Servy2.Plugins, only: [rewrite_path: 1, log: 1, track: 1]
@@ -23,14 +25,14 @@ defmodule Servy2.Handler do
     |> format_response
   end
 
-  def emojify(%{status: 200 } = conv) do
+  def emojify(%Conv{status: 200 } = conv) do
     body = "✅✅✅\n" <> conv.resp_body <> "\n✅✅✅"
     %{ conv | resp_body: body } 
   end
 
-  def emojify(conv), do: conv
+  def emojify(%Conv{} = conv), do: conv
   
-  def route(%{ method: "GET", path: "/pages/" <> page } = conv) do
+  def route(%Conv{ method: "GET", path: "/pages/" <> page } = conv) do
     @pages_path
     |> IO.inspect
     |> Path.join(page <> ".html")
@@ -38,30 +40,30 @@ defmodule Servy2.Handler do
     |> handle_file(conv)
   end
 
-  def route(%{ method: "GET", path: "/wildthings" } = conv) do
+  def route(%Conv{ method: "GET", path: "/wildthings" } = conv) do
     %{ conv | status: 200, resp_body: "Bears, Lions, Tigers" }
   end
 
-  def route(%{ method: "GET", path: "/bears" } = conv) do
+  def route(%Conv{ method: "GET", path: "/bears" } = conv) do
     %{ conv | status: 200, resp_body: "Teddy, Smokey, Paddington" }
   end
 
-  def route(%{ method: "GET", path: "/bears/" <> id } = conv) do
+  def route(%Conv{ method: "GET", path: "/bears/" <> id } = conv) do
     %{ conv | status: 200, resp_body: "Bear #{id}" }
   end
 
-  def route(%{ method: "DELETE", path: "/bears/" <> _id } = conv) do
+  def route(%Conv{ method: "DELETE", path: "/bears/" <> _id } = conv) do
     %{ conv | status: 403, resp_body: "Sorry, we can't do deletions here."}
   end
 
-  def route(%{ method: _method, path: path } = conv) do 
+  def route(%Conv{ method: _method, path: path } = conv) do 
     %{ conv | status: 404, resp_body: "No #{path} here!" }
   end
 
-  def format_response(conv) do
+  def format_response(%Conv{} = conv) do
     # TODO: Use values in the map to create an HTTP response string:
     """
-    HTTP/1.1 #{conv.status} #{status_reason(conv.status)}
+    HTTP/1.1 #{Conv.full_status(conv)}
     Content-Type: text/html
     Content-Length: #{byte_size(conv.resp_body)}
 
@@ -69,27 +71,16 @@ defmodule Servy2.Handler do
     """
   end
 
-  defp status_reason(code) do
-    %{
-      200 => "OK",
-      201 => "Created",
-      401 => "Unauthorized",
-      403 => "Forbidden",
-      404 => "Not Found",
-      500 => "Internal Server Error"
-    }[code]
-  end
-
-  defp handle_file({:ok, content}, conv) do
+  defp handle_file({:ok, content}, %Conv{} = conv) do
     %{ conv | status: 200, resp_body: content }
   end
   
-  defp handle_file({:error, :enoent}, conv) do
+  defp handle_file({:error, :enoent}, %Conv{} = conv) do
     Logger.info "File missing, inserting default string"
     %{conv | status: 404, resp_body: "file not found. sorry bout that" }
   end
   
-  defp handle_file({:error, reason}, conv) do
+  defp handle_file({:error, reason}, %Conv{} = conv) do
     Logger.warn "There was some other erorr"
     %{conv | status: 500, resp_body: "File error: #{reason}" }
   end
