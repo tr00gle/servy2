@@ -21,7 +21,7 @@ defmodule Servy2.Plugins do
   def rewrite_path(conv), do: conv
 
    @doc "logs 404'ed requests"
-  def track(%Conv{ status: 404, path: path} = conv) do
+  def track(%Conv{  status: 404, path: path} = conv) do
     IO.puts "Warning: #{path} is not a valid route"
     conv
   end

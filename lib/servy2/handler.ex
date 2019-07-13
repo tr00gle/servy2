@@ -34,7 +34,6 @@ defmodule Servy2.Handler do
   
   def route(%Conv{ method: "GET", path: "/pages/" <> page } = conv) do
     @pages_path
-    |> IO.inspect
     |> Path.join(page <> ".html")
     |> File.read
     |> handle_file(conv)
