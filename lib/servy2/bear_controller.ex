@@ -2,19 +2,19 @@ defmodule Servy2.BearController do
 
   alias Servy2.Wildthings
   alias Servy2.Bear
+
+  @templates_path Path.expand("../../templates", __DIR__)
   
   def index(conv) do
-    bears_string = 
+    bears = 
       Wildthings.list_bears()
       |> Enum.sort(&Bear.sort_asc_by_name/2)
-      |> Enum.map(&make_bear_item/1)
-      |> Enum.join
-    %{ conv | status: 200, resp_body: "<ul>#{bears_string}</ul>" }
+    render(conv, "index.eex", bears: bears)
   end
 
   def show(conv, %{"id" => id}) do
     bear = Wildthings.get_bear(id)
-    %{ conv | status: 200, resp_body: "<h1>#{bear.name} - #{bear.type}</h1>" }
+    render(conv, "show.eex", bear: bear)
   end
 
   def create(conv, %{"name" => name, "type" => type} = _params) do
@@ -25,8 +25,11 @@ defmodule Servy2.BearController do
     %{ conv | status: 403, resp_body: "deleting bears is forbidden!" }
   end
 
-  defp make_bear_item(bear) do
-    "<li>#{bear.name} - #{bear.type}</li>"
+  defp render(conv, template, bindings \\ []) do
+    content = 
+    @templates_path
+    |> Path.join(template)
+    |> EEx.eval_file(bindings)
+  %{ conv | status: 200, resp_body: content }
   end
-
 end
