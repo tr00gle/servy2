@@ -15,6 +15,8 @@ defmodule Servy2 do
   def hello(name) do
     "Hello, #{name}"
   end
+
+  def hello, do: :world
 end
 
 IO.puts Servy2.hello("Stuff")
