@@ -10,7 +10,7 @@ defmodule Servy2.Recurse do
     map(tail, function, [new_head | new_list])
   end
 
-  def map([], _function, new_list), do: new_list
+  def map([], _function, new_list), do: Enum.reverse(new_list)
 
   # better 
   def my_map([head | tail], fun) do
