@@ -7,6 +7,7 @@ defmodule Servy2.Handler do
 
   alias Servy2.Conv
   alias Servy2.BearController
+
   # @pages_path Path.expand("../../pages", __DIR__)
   # Use this method when compiling with `iex -S mix`
   @pages_path Path.expand("pages", File.cwd!)
@@ -23,6 +24,7 @@ defmodule Servy2.Handler do
     |> route
     |> track
     # |> emojify
+    |> put_content_length_header
     |> format_response
   end
 
@@ -48,6 +50,10 @@ defmodule Servy2.Handler do
     BearController.index(conv)
   end
 
+  def route(%Conv{ method: "GET", path: "/api/bears" } = conv) do
+    Servy2.Api.BearController.index(conv)
+  end
+
   def route(%Conv{ method: "GET", path: "/bears/" <> id } = conv) do
     params = Map.put(conv.params, "id", id)
     BearController.show(conv, params)
@@ -65,12 +71,17 @@ defmodule Servy2.Handler do
     %{ conv | status: 404, resp_body: "No #{path} here!" }
   end
 
+  def put_content_length_header(conv) do
+    headers = Map.put(conv.resp_headers, :content_length, byte_size(conv.resp_body))
+    %{ conv | resp_headers: headers } 
+  end
+
   def format_response(%Conv{} = conv) do
     # TODO: Use values in the map to create an HTTP response string:
     """
     HTTP/1.1 #{Conv.full_status(conv)}\r
-    Content-Type: text/html\r
-    Content-Length: #{byte_size(conv.resp_body)}\r
+    Content-Type: #{conv.resp_headers.content_type}\r
+    Content-Length: #{conv.resp_headers.content_length}\r
     \r
     #{conv.resp_body}
     """
