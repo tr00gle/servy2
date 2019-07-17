@@ -42,6 +42,10 @@ defmodule Servy2.Handler do
     |> handle_file(conv)
   end
 
+  def route(%Conv{ method: "POST", path: "/api/bears" } = conv) do 
+    Servy2.Api.BearController.create(conv, conv.params)
+  end
+
   def route(%Conv{ method: "GET", path: "/wildthings" } = conv) do
     %{ conv | status: 200, resp_body: "Bears, Lions, Tigers" }
   end
@@ -68,36 +72,44 @@ defmodule Servy2.Handler do
   end
 
   def route(%Conv{method: _method, path: path} = conv) do 
-    %{ conv | status: 404, resp_body: "No #{path} here!" }
+    %{conv | status: 404, resp_body: "No #{path} here!"}
   end
 
   def put_content_length_header(conv) do
-    headers = Map.put(conv.resp_headers, :content_length, byte_size(conv.resp_body))
-    %{ conv | resp_headers: headers } 
+    headers = Map.put(conv.resp_headers, "Content-Length", byte_size(conv.resp_body))
+    %{conv | resp_headers: headers} 
   end
 
   def format_response(%Conv{} = conv) do
     # TODO: Use values in the map to create an HTTP response string:
     """
     HTTP/1.1 #{Conv.full_status(conv)}\r
-    Content-Type: #{conv.resp_headers.content_type}\r
-    Content-Length: #{conv.resp_headers.content_length}\r
+    #{format_response_headers(conv)}
     \r
     #{conv.resp_body}
     """
   end
 
+  defp format_response_headers(%Conv{} = conv) do
+    for {key, value} <- conv.resp_headers do
+      "#{key}: #{value}\r"
+    end 
+    |> Enum.sort
+    |> Enum.reverse
+    |> Enum.join("\n")
+  end
+
   defp handle_file({:ok, content}, %Conv{} = conv) do
-    %{ conv | status: 200, resp_body: content }
+    %{conv | status: 200, resp_body: content}
   end
   
   defp handle_file({:error, :enoent}, %Conv{} = conv) do
     Logger.info "File missing, inserting default string"
-    %{conv | status: 404, resp_body: "file not found. sorry bout that" }
+    %{conv | status: 404, resp_body: "file not found. sorry bout that"}
   end
   
   defp handle_file({:error, reason}, %Conv{} = conv) do
     Logger.warn "There was some other erorr"
-    %{conv | status: 500, resp_body: "File error: #{reason}" }
+    %{conv | status: 500, resp_body: "File error: #{reason}"}
   end
 end
