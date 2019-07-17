@@ -88,7 +88,7 @@ defmodule Servy2.Handler do
     \r
     #{conv.resp_body}
     """
-  end
+  end 
 
   defp format_response_headers(%Conv{} = conv) do
     for {key, value} <- conv.resp_headers do

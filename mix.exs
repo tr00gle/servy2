@@ -22,7 +22,8 @@ defmodule Servy2.MixProject do
   defp deps do
     [
       {:credo, "~> 1.0.0", only: [:dev, :test], runtime: false},
-      {:poison, "~> 4.0"}
+      {:poison, "~> 4.0"},
+      {:earmark, "~> 1.3"}
     ]
   end
 end
