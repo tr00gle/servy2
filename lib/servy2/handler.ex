@@ -35,6 +35,13 @@ defmodule Servy2.Handler do
 
   def emojify(%Conv{} = conv), do: conv
   
+  def route(%Conv{method: "GET", path: "/hibernate/" <> time} = conv) do
+    time
+    |> String.to_integer
+    |> :timer.sleep
+    
+    %{ conv | status: 200, resp_body: "Awake!" }
+  end
   def route(%Conv{ method: "GET", path: "/pages/" <> page } = conv) do
     @pages_path
     |> Path.join(page <> ".html")
