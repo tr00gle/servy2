@@ -19,4 +19,4 @@ defmodule Servy2 do
   def hello, do: :world
 end
 
-IO.puts Servy2.hello("Stuff")
+IO.puts(Servy2.hello("Stuff"))

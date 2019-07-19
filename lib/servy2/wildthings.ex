@@ -3,8 +3,8 @@ defmodule Servy2.Wildthings do
 
   def list_bears do
     Path.expand("../db", __DIR__)
-    |> Path.join("bears.json") 
-    |> File.read
+    |> Path.join("bears.json")
+    |> File.read()
     |> handle_file
     |> Map.get("bears")
   end
@@ -14,16 +14,16 @@ defmodule Servy2.Wildthings do
   end
 
   defp handle_file({:error, _reason}) do
-    %{ "bears" => "Ooops. There was a bearror."}
+    %{"bears" => "Ooops. There was a bearror."}
   end
 
   def get_bear(id) when is_integer(id) do
-    Enum.find(list_bears(), fn(b) -> b.id == id end)
+    Enum.find(list_bears(), fn b -> b.id == id end)
   end
 
   def get_bear(id) when is_binary(id) do
     id
-    |> String.to_integer
+    |> String.to_integer()
     |> get_bear
   end
 end

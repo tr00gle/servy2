@@ -1,8 +1,8 @@
 defmodule Servy2.Conv do
-  defstruct method: "", 
-            path: "", 
+  defstruct method: "",
+            path: "",
             resp_body: "",
-            resp_headers: %{ "Content-Type" => "text/html" },
+            resp_headers: %{"Content-Type" => "text/html"},
             status: nil,
             headers: %{},
             params: %{}
