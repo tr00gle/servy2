@@ -15,7 +15,7 @@
 #           {ok, list_to_binary(Bs)}
 #   end.
 
-defmodule Servy2.HttpServer do
+defmodule Servy2.HTTPServer do
   # direct transcoding of the server function from :gen_tcp docs 
   def server do
     {:ok, lsock} = :gen_tcp.listen(5678, [:binary, {:packet, 0}, {:active, false}])
