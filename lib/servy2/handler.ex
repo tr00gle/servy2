@@ -8,15 +8,14 @@ defmodule Servy2.Handler do
 
   alias Servy2.Conv
   alias Servy2.BearController
-  
+
   require Logger
-  
+
   # @pages_path Path.expand("../../pages", __DIR__)
   # Use this method when compiling with `iex -S mix`
   @pages_path Path.expand("pages", File.cwd!())
 
-
-  @doc "transforms request into a resposne"
+  @doc "transforms request into a response"
   def handle(request) do
     request
     |> parse

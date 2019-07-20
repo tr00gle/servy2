@@ -14,6 +14,9 @@ defmodule Servy2.MixProject do
         "coveralls.detail": :test,
         "coveralls.post": :test,
         "coveralls.html": :test
+      ],
+      dialyzer: [
+        plt_add_apps: [:mix, :ex_unit]
       ]
     ]
   end
@@ -31,7 +34,8 @@ defmodule Servy2.MixProject do
       {:credo, "~> 1.0.0", only: [:dev, :test], runtime: false},
       {:poison, "~> 4.0"},
       {:earmark, "~> 1.3"},
-      {:excoveralls, "~> 0.10", only: :test}
+      {:excoveralls, "~> 0.10", only: :test},
+      {:dialyxir, "~> 1.0.0-rc.4", only: [:dev, :test], runtime: false}
     ]
   end
 end
