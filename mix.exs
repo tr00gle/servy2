@@ -35,7 +35,8 @@ defmodule Servy2.MixProject do
       {:poison, "~> 4.0"},
       {:earmark, "~> 1.3"},
       {:excoveralls, "~> 0.10", only: :test},
-      {:dialyxir, "~> 1.0.0-rc.4", only: [:dev, :test], runtime: false}
+      {:dialyxir, "~> 1.0.0-rc.4", only: [:dev, :test], runtime: false},
+      {:ex_doc, "~> 0.19", only: [:dev, :test], runtime: false}
     ]
   end
 end
