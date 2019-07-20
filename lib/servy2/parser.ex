@@ -21,7 +21,6 @@ defmodule Servy2.Parser do
       iex> Servy2.Parser.parse_params("multipart/form-data", params_string)
       %{}
   """
-
   def parse_params("application/x-www-form-urlencoded", params_string) do
     params_string
     |> String.trim()

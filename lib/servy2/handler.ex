@@ -1,21 +1,21 @@
 defmodule Servy2.Handler do
-  require Logger
-
   @moduledoc """
     Handles HTTP Requests
   """
 
+  import Servy2.Plugins, only: [rewrite_path: 1, log: 1, track: 1]
+  import Servy2.Parser, only: [parse: 1]
+
   alias Servy2.Conv
   alias Servy2.BearController
+
+  require Logger
 
   # @pages_path Path.expand("../../pages", __DIR__)
   # Use this method when compiling with `iex -S mix`
   @pages_path Path.expand("pages", File.cwd!())
 
-  import Servy2.Plugins, only: [rewrite_path: 1, log: 1, track: 1]
-  import Servy2.Parser, only: [parse: 1]
-
-  @doc "transforms request into a resposne"
+  @doc "transforms request into a response"
   def handle(request) do
     request
     |> parse
@@ -89,7 +89,6 @@ defmodule Servy2.Handler do
   end
 
   def format_response(%Conv{} = conv) do
-    # TODO: Use values in the map to create an HTTP response string:
     """
     HTTP/1.1 #{Conv.full_status(conv)}\r
     #{format_response_headers(conv)}
