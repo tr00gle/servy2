@@ -7,7 +7,14 @@ defmodule Servy2.MixProject do
       version: "0.1.0",
       elixir: "~> 1.8",
       start_permanent: Mix.env() == :prod,
-      deps: deps()
+      deps: deps(),
+      test_coverage: [tool: ExCoveralls],
+      preferred_cli_env: [
+        coveralls: :test,
+        "coveralls.detail": :test,
+        "coveralls.post": :test,
+        "coveralls.html": :test
+      ]
     ]
   end
 
@@ -23,7 +30,8 @@ defmodule Servy2.MixProject do
     [
       {:credo, "~> 1.0.0", only: [:dev, :test], runtime: false},
       {:poison, "~> 4.0"},
-      {:earmark, "~> 1.3"}
+      {:earmark, "~> 1.3"},
+      {:excoveralls, "~> 0.10", only: :test}
     ]
   end
 end
