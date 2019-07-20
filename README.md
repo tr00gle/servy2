@@ -1,5 +1,8 @@
 # Servy2
 
+## Status:
+[![CircleCI](https://circleci.com/gh/tr00gle/servy2/tree/master.svg?style=shield)](https://circleci.com/gh/tr00gle/servy2/tree/master)
+
 **TODO: Add description**
 
 ## Installation
