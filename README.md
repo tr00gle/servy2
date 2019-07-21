@@ -2,6 +2,7 @@
 
 ## Status:
 [![CircleCI](https://circleci.com/gh/tr00gle/servy2/tree/master.svg?style=shield)](https://circleci.com/gh/tr00gle/servy2/tree/master)
+[![Coverage Status](https://coveralls.io/repos/github/tr00gle/servy2/badge.svg?branch=master)](https://coveralls.io/github/tr00gle/servy2?branch=master)
 
 **TODO: Add description**
 
