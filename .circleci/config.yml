@@ -53,6 +53,8 @@ jobs:
           command: mix dialyzer --halt-exit-status
 
   test:
+    override:
+      - coveralls.circle
     docker:
       - image: circleci/elixir:1.8.2
 
