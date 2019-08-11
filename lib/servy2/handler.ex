@@ -35,6 +35,10 @@ defmodule Servy2.Handler do
 
   def emojify(%Conv{} = conv), do: conv
 
+  def route(%Conv{method: "GET", path: "/kaboom"}) do
+    raise "kabooooooom!"
+  end
+
   def route(%Conv{method: "GET", path: "/hibernate/" <> time} = conv) do
     time
     |> String.to_integer()
