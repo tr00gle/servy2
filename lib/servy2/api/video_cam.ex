@@ -6,7 +6,7 @@ defmodule Servy2.VideoCam do
   def get_snapshot(camera_name) do
     
     # sleep 2 seconds to simulate that the API can be slow
-    :timer.seep(2000)
+    :timer.sleep(5000)
 
     # example response returned from the API:
     "#{camera_name}-snapshot.jpg"
