@@ -6,11 +6,11 @@ defmodule HTTPServerTest do
   """
   use ExUnit.Case
 
-  alias Servy.HttpServer
-  alias Servy.HttpClient
+  alias Servy2.HTTPServer
+  alias Servy2.HTTPClient
 
   test "accepts a request on a socket and sends back a response" do
-    spawn(HttpServer, :start, [4000])
+    spawn(HTTPServer, :start, [4000])
 
     request = """
     GET /wildthings HTTP/1.1\r
@@ -20,7 +20,8 @@ defmodule HTTPServerTest do
     \r
     """
 
-    response = HttpClient.send_request(request)
+    response = HTTPClient.send_request(request)
+    inspect response
 
     assert response == """
            HTTP/1.1 200 OK\r
