@@ -46,15 +46,27 @@ defmodule Servy2.Handler do
     pid1 = spawn(fn -> send(caller, {:result, VideoCam.get_snapshot("cam-1")}) end)
     pid2 = spawn(fn -> send(caller, {:result, VideoCam.get_snapshot("cam-2")}) end)
     pid3 = spawn(fn -> send(caller, {:result, VideoCam.get_snapshot("cam-3")}) end)
-    
-    snapshot1 = receive do {:result, filename} -> filename end
-    snapshot2 = receive do {:result, filename} -> filename end
-    snapshot3 = receive do {:result, filename} -> filename end
+
+    snapshot1 =
+      receive do
+        {:result, filename} -> filename
+      end
+
+    snapshot2 =
+      receive do
+        {:result, filename} -> filename
+      end
+
+    snapshot3 =
+      receive do
+        {:result, filename} -> filename
+      end
 
     snapshots = [snapshot1, snapshot2, snapshot3]
 
-    %{conv | status: 200, resp_body: inspect snapshots}
+    %{conv | status: 200, resp_body: inspect(snapshots)}
   end
+
   def route(%Conv{method: "GET", path: "/hibernate/" <> time} = conv) do
     time
     |> String.to_integer()
