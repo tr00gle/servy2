@@ -21,7 +21,6 @@ defmodule HTTPServerTest do
     """
 
     response = HTTPClient.send_request(request)
-    inspect response
 
     assert response == """
            HTTP/1.1 200 OK\r
