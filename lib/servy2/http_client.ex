@@ -9,6 +9,6 @@ defmodule Servy2.HTTPClient do
   end
 
   def handle_response(response) do
-    IO.puts(response)
+    IO.inspect(response)
   end
 end
