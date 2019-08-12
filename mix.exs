@@ -34,6 +34,7 @@ defmodule Servy2.MixProject do
     [
       {:credo, "~> 1.0.0", only: [:dev, :test], runtime: false},
       {:poison, "~> 4.0"},
+      {:httpoison, "~> 1.5"},
       {:earmark, "~> 1.3"},
       {:excoveralls, "~> 0.10", only: :test},
       {:dialyxir, "~> 1.0.0-rc.6", only: [:dev, :test], runtime: false},
