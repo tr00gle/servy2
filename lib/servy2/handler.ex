@@ -41,7 +41,7 @@ defmodule Servy2.Handler do
     raise "kabooooooom!"
   end
 
-  def route(%Conv{method: "GET", path: "/snapshots"} = conv) do
+  def route(%Conv{method: "GET", path: "/sensors"} = conv) do
     snapshots =
       ["cam-1", "cam-2", "cam-3"]
       |> Enum.map(&Fetcher.async(fn -> VideoCam.get_snapshot(&1) end))
