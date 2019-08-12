@@ -8,6 +8,7 @@ defmodule HTTPServerTest do
 
   alias Servy2.HTTPServer
 
+  @tag :skip
   test "accepts a request on a socket and sends back a response" do
     spawn(HTTPServer, :start, [4000])
 
