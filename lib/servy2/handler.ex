@@ -9,6 +9,7 @@ defmodule Servy2.Handler do
   alias Servy2.Conv
   alias Servy2.BearController
   alias Servy2.VideoCam
+  alias Servy2.Fetcher
 
   require Logger
 
@@ -41,28 +42,10 @@ defmodule Servy2.Handler do
   end
 
   def route(%Conv{method: "GET", path: "/snapshots"} = conv) do
-    caller = self()
-
-    pid1 = spawn(fn -> send(caller, {:result, VideoCam.get_snapshot("cam-1")}) end)
-    pid2 = spawn(fn -> send(caller, {:result, VideoCam.get_snapshot("cam-2")}) end)
-    pid3 = spawn(fn -> send(caller, {:result, VideoCam.get_snapshot("cam-3")}) end)
-
-    snapshot1 =
-      receive do
-        {:result, filename} -> filename
-      end
-
-    snapshot2 =
-      receive do
-        {:result, filename} -> filename
-      end
-
-    snapshot3 =
-      receive do
-        {:result, filename} -> filename
-      end
-
-    snapshots = [snapshot1, snapshot2, snapshot3]
+    snapshots =
+      ["cam-1", "cam-2", "cam-3"]
+      |> Enum.map(&Fetcher.async(fn -> VideoCam.get_snapshot(&1) end))
+      |> Enum.map(&Fetcher.get_result/1)
 
     %{conv | status: 200, resp_body: inspect(snapshots)}
   end
