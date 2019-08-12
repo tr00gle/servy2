@@ -9,7 +9,6 @@ defmodule Servy2.Handler do
   alias Servy2.Conv
   alias Servy2.BearController
   alias Servy2.VideoCam
-  alias Servy2.Fetcher
 
   require Logger
 
@@ -42,12 +41,16 @@ defmodule Servy2.Handler do
   end
 
   def route(%Conv{method: "GET", path: "/sensors"} = conv) do
+    task = Task.async(fn -> Servy2.Tracker.get_location("bigfoot") end)
+
     snapshots =
       ["cam-1", "cam-2", "cam-3"]
-      |> Enum.map(&Fetcher.async(fn -> VideoCam.get_snapshot(&1) end))
-      |> Enum.map(&Fetcher.get_result/1)
+      |> Enum.map(&Task.async(fn -> VideoCam.get_snapshot(&1) end))
+      |> Enum.map(&Task.await/1)
 
-    %{conv | status: 200, resp_body: inspect(snapshots)}
+    where_is_bigfoot = Task.await(task)
+
+    %{conv | status: 200, resp_body: inspect({snapshots, where_is_bigfoot})}
   end
 
   def route(%Conv{method: "GET", path: "/hibernate/" <> time} = conv) do
