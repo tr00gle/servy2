@@ -5,6 +5,7 @@ defmodule Servy2.Handler do
 
   import Servy2.Plugins, only: [rewrite_path: 1, log: 1, track: 1]
   import Servy2.Parser, only: [parse: 1]
+  import Servy2.View, only: [render: 3]
 
   alias Servy2.Conv
   alias Servy2.BearController
@@ -40,31 +41,17 @@ defmodule Servy2.Handler do
     raise "kabooooooom!"
   end
 
-  def route(%Conv{method: "GET", path: "/snapshots"} = conv) do
-    caller = self()
+  def route(%Conv{method: "GET", path: "/sensors"} = conv) do
+    task = Task.async(fn -> Servy2.Tracker.get_location("bigfoot") end)
 
-    pid1 = spawn(fn -> send(caller, {:result, VideoCam.get_snapshot("cam-1")}) end)
-    pid2 = spawn(fn -> send(caller, {:result, VideoCam.get_snapshot("cam-2")}) end)
-    pid3 = spawn(fn -> send(caller, {:result, VideoCam.get_snapshot("cam-3")}) end)
+    snapshots =
+      ["cam-1", "cam-2", "cam-3"]
+      |> Enum.map(&Task.async(fn -> VideoCam.get_snapshot(&1) end))
+      |> Enum.map(&Task.await(&1, :infinity))
 
-    snapshot1 =
-      receive do
-        {:result, filename} -> filename
-      end
+    where_is_bigfoot = Task.await(task)
 
-    snapshot2 =
-      receive do
-        {:result, filename} -> filename
-      end
-
-    snapshot3 =
-      receive do
-        {:result, filename} -> filename
-      end
-
-    snapshots = [snapshot1, snapshot2, snapshot3]
-
-    %{conv | status: 200, resp_body: inspect(snapshots)}
+    render(conv, "sensors.eex", snapshots: snapshots, location: where_is_bigfoot)
   end
 
   def route(%Conv{method: "GET", path: "/hibernate/" <> time} = conv) do
