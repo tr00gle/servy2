@@ -1,28 +1,34 @@
 defmodule Servy2.PledgeServer do
   def listen_loop(state) do
-    IO.puts("waiting for a message...")
-
     receive do
-      {:create_pledge, name, amount} ->
+      {sender, :create_pledge, name, amount} ->
         {:ok, id} = send_pledges_to_service(name, amount)
-        new_state = [{name, amount} | state]
+        most_recent = Enum.take(state, 2)
+        new_state = [{name, amount} | most_recent]
         List.pop_at(new_state, -1)
-        IO.puts("sent pledge #{id} to service")
-        IO.puts("new state is #{inspect(new_state)}")
         listen_loop(new_state)
+        send(sender, {:response, id})
 
       {sender, :recent_pledges} ->
         send(sender, {:response, state})
-        IO.puts("sent pledges to #{inspect(sender)}")
         listen_loop(state)
     end
   end
 
-  def create_pledge(name, amount) do
-    {:ok, id} = send_pledges_to_service(name, amount)
+  def create_pledge(pid, name, amount) do
+    send(pid, {self(), :create_pledge, name, amount})
+
+    receive do
+      {:response, status} -> status
+    end
   end
 
-  def recent_pledges do
+  def recent_pledges(pid) do
+    send(pid, {self(), :recent_pledges})
+
+    receive do
+      {:response, pledges} -> pledges
+    end
   end
 
   defp send_pledges_to_service(_name, _amount) do
