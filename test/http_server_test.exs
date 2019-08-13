@@ -15,7 +15,7 @@ defmodule HTTPServerTest do
     url = "http://localhost:4000/wildthings"
 
     1..5
-    |> Enum.map(fn(_) -> Task.async(fn -> HTTPoison.get(url) end) end)
+    |> Enum.map(fn _ -> Task.async(fn -> HTTPoison.get(url) end) end)
     |> Enum.map(&Task.await/1)
     |> Enum.map(&assert_successful_response/1)
   end
