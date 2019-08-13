@@ -46,7 +46,7 @@ defmodule Servy2.Handler do
     snapshots =
       ["cam-1", "cam-2", "cam-3"]
       |> Enum.map(&Task.async(fn -> VideoCam.get_snapshot(&1) end))
-      |> Enum.map(&Task.await/1)
+      |> Enum.map(&Task.await(&1, 6000))
 
     where_is_bigfoot = Task.await(task)
 
