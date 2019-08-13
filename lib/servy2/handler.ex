@@ -5,6 +5,7 @@ defmodule Servy2.Handler do
 
   import Servy2.Plugins, only: [rewrite_path: 1, log: 1, track: 1]
   import Servy2.Parser, only: [parse: 1]
+  import Servy2.View, only: [render: 3]
 
   alias Servy2.Conv
   alias Servy2.BearController
@@ -46,11 +47,11 @@ defmodule Servy2.Handler do
     snapshots =
       ["cam-1", "cam-2", "cam-3"]
       |> Enum.map(&Task.async(fn -> VideoCam.get_snapshot(&1) end))
-      |> Enum.map(&Task.await(&1, 6000))
+      |> Enum.map(&Task.await(&1, :infinity))
 
     where_is_bigfoot = Task.await(task)
 
-    %{conv | status: 200, resp_body: inspect({snapshots, where_is_bigfoot})}
+    render(conv, "sensors.eex", snapshots: snapshots, location: where_is_bigfoot)
   end
 
   def route(%Conv{method: "GET", path: "/hibernate/" <> time} = conv) do
