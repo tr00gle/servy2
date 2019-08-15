@@ -4,6 +4,7 @@
 [![CircleCI](https://circleci.com/gh/tr00gle/servy2/tree/master.svg?style=shield)](https://circleci.com/gh/tr00gle/servy2/tree/master)
 
 **TODO: Add description**
+An elixir learning experience.
 
 ## Installation
 
