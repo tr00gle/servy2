@@ -5,7 +5,7 @@ defmodule Servy2.MixProject do
     [
       app: :servy2,
       version: "0.1.0",
-      elixir: "~> 1.8.0",
+      elixir: "~> 1.9.0",
       start_permanent: Mix.env() == :prod,
       deps: deps(),
       test_coverage: [tool: ExCoveralls],

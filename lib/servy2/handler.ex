@@ -37,12 +37,21 @@ defmodule Servy2.Handler do
 
   def emojify(%Conv{} = conv), do: conv
 
+  def route(%Conv{method: "POST", path: "/pledges"} = conv) do
+    Servy2.PledgeController.create(conv, conv.params)
+  end
+
+  def route(%Conv{method: "GET", path: "/pledges"} = conv) do
+    Servy2.PledgeController.index(conv)
+  end
+
   def route(%Conv{method: "GET", path: "/kaboom"}) do
     raise "kabooooooom!"
   end
 
   def route(%Conv{method: "GET", path: "/sensors"} = conv) do
-    task = Task.async(fn -> Servy2.Tracker.get_location("bigfoot") end)
+    # task = Task.async(fn -> Servy2.Tracker.get_location("bigfoot") end)
+    task = Task.async(Servy2.Tracker, :get_location, ["bigfoot"])
 
     snapshots =
       ["cam-1", "cam-2", "cam-3"]
