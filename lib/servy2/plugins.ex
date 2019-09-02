@@ -1,5 +1,6 @@
 defmodule Servy2.Plugins do
   alias Servy2.Conv
+  alias Servy2.FourOhFourCounter, as: Counter
 
   def rewrite_path(%Conv{path: "/wildlife"} = conv) do
     %{conv | path: "/wildthings"}
@@ -22,7 +23,8 @@ defmodule Servy2.Plugins do
   @doc "logs 404'ed requests"
   def track(%Conv{status: 404, path: path} = conv) do
     if Mix.env() == :prod do
-      IO.puts("Warning: #{path} is not a valid route")
+      IO.puts("Warning: #{path} is on the loose!")
+      Servy2.FourOhFourCounter.bump_count(path)
     end
 
     conv
