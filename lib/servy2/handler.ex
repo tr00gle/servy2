@@ -37,6 +37,12 @@ defmodule Servy2.Handler do
 
   def emojify(%Conv{} = conv), do: conv
 
+  def route(%Conv{method: "GET", path: "/404s"} = conv) do
+    counts = Servy.FourOhFourCounter.get_counts()
+
+    %{conv | status: 200, resp_body: inspect(counts)}
+  end
+
   def route(%Conv{method: "POST", path: "/pledges"} = conv) do
     Servy2.PledgeController.create(conv, conv.params)
   end
