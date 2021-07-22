@@ -33,7 +33,7 @@ defmodule Servy2.MixProject do
   defp deps do
     [
       {:credo, "~> 1.0.0", only: [:dev, :test], runtime: false},
-      {:poison, "~> 4.0"},
+      {:poison, "~> 5.0"},
       {:httpoison, "~> 1.5"},
       {:earmark, "~> 1.3"},
       {:excoveralls, "~> 0.10", only: :test},
